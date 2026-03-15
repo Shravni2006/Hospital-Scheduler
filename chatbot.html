@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Hospital Chatbot Assistant</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f7f9fc; margin: 0; display: flex; flex-direction: column; align-items: center; height: 100vh; }
+    .chat-container { background: white; width: 380px; height: 550px; margin-top: 40px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.2); display: flex; flex-direction: column; }
+    .messages { flex: 1; overflow-y: auto; padding: 15px; }
+    .message { margin: 8px 0; }
+    .bot { background: #e8f0fe; padding: 10px; border-radius: 8px; align-self: flex-start; }
+    .user { background: #c3e88d; padding: 10px; border-radius: 8px; align-self: flex-end; }
+    .input-area { display: flex; border-top: 1px solid #ccc; }
+    input { flex: 1; border: none; padding: 10px; font-size: 15px; border-radius: 0 0 0 10px; }
+    button { border: none; background: #4CAF50; color: white; padding: 10px 15px; border-radius: 0 0 10px 0; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h2>💬 Hospital Chatbot Assistant</h2>
+  <div class="chat-container">
+    <div class="messages" id="messages">
+      <div class="message bot">👩‍⚕️ Hi! I’m your hospital assistant. How can I help you today?</div>
+    </div>
+    <div class="input-area">
+      <input id="userInput" placeholder="Type your message..." />
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+
+  <script>
+    async function sendMessage() {
+      const input = document.getElementById('userInput');
+      const msg = input.value.trim();
+      if (!msg) return;
+
+      const messages = document.getElementById('messages');
+      messages.innerHTML += `<div class="message user">${msg}</div>`;
+      input.value = '';
+
+      const res = await fetch('/chatbot', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({message: msg})
+      });
+      const data = await res.json();
+
+      messages.innerHTML += `<div class="message bot">${data.reply}</div>`;
+      messages.scrollTop = messages.scrollHeight;
+    }
+  </script>
+</body>
+</html>
